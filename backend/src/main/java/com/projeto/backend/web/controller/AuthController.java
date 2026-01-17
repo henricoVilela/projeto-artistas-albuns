@@ -3,6 +3,7 @@ package com.projeto.backend.web.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.projeto.backend.security.AuthService;
 import com.projeto.backend.web.dto.auth.AuthRequest;
 import com.projeto.backend.web.dto.auth.AuthResponse;
+import com.projeto.backend.web.dto.auth.RegisterRequest;
 
 import jakarta.validation.Valid;
 
@@ -39,5 +41,19 @@ public class AuthController {
         
         AuthResponse response = authService.login(request);
         return ResponseEntity.ok(response);
+    }
+    
+    /**
+     * Registra um novo usuário.
+     *
+     * @param request Dados de registro
+     * @return Tokens JWT e informações do usuário criado
+     */
+    @PostMapping("/register")
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequest request) {
+        logger.info("Requisição de registro recebida para usuário: {}", request.getUsername());
+        
+        AuthResponse response = authService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
