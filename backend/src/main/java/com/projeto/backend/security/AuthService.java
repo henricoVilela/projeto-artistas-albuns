@@ -16,6 +16,7 @@ import com.projeto.backend.domain.usuario.UsuarioRepository;
 import com.projeto.backend.security.jwt.JwtService;
 import com.projeto.backend.web.dto.auth.AuthRequest;
 import com.projeto.backend.web.dto.auth.AuthResponse;
+import com.projeto.backend.web.dto.auth.RefreshRequest;
 import com.projeto.backend.web.dto.auth.RegisterRequest;
 
 /**
@@ -110,6 +111,44 @@ public class AuthService {
         return AuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
+                .tokenType("Bearer")
+                .expiresIn(jwtService.getJwtExpiration() / 1000)
+                .username(usuario.getUsername())
+                .email(usuario.getEmail())
+                .build();
+    }
+    
+    /**
+     * Renova o token de acesso usando um refresh token válido.
+     *
+     * @param request Dados com refresh token
+     * @return Resposta com novo token de acesso
+     * @throws IllegalArgumentException Se o refresh token for inválido
+     */
+    @Transactional(readOnly = true)
+    public AuthResponse refresh(RefreshRequest request) {
+        String refreshToken = request.getRefreshToken();
+
+        if (!jwtService.isRefreshToken(refreshToken)) {
+            throw new IllegalArgumentException("Token inválido. Não é um refresh token.");
+        }
+        
+        String username = jwtService.extractUsername(refreshToken);
+        
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+
+        if (!jwtService.validateToken(refreshToken, usuario)) {
+            throw new IllegalArgumentException("Refresh token expirado ou inválido");
+        }
+
+        String newAccessToken = jwtService.generateToken(usuario);
+
+        logger.info("Token renovado com sucesso para usuário: {}", username);
+
+        return AuthResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(refreshToken) // Mantém o mesmo refresh token
                 .tokenType("Bearer")
                 .expiresIn(jwtService.getJwtExpiration() / 1000)
                 .username(usuario.getUsername())

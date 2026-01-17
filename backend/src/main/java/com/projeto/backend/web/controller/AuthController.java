@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.projeto.backend.security.AuthService;
 import com.projeto.backend.web.dto.auth.AuthRequest;
 import com.projeto.backend.web.dto.auth.AuthResponse;
+import com.projeto.backend.web.dto.auth.RefreshRequest;
 import com.projeto.backend.web.dto.auth.RegisterRequest;
 
 import jakarta.validation.Valid;
@@ -55,5 +56,19 @@ public class AuthController {
         
         AuthResponse response = authService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+    
+    /**
+     * Renova o token de acesso usando um refresh token válido.
+     *
+     * @param request Dados com refresh token
+     * @return Novo token de acesso
+     */
+    @PostMapping("/refresh")
+    public ResponseEntity<AuthResponse> refresh(@Valid @RequestBody RefreshRequest request) {
+        logger.info("Requisição de refresh token recebida");
+        
+        AuthResponse response = authService.refresh(request);
+        return ResponseEntity.ok(response);
     }
 }
