@@ -59,4 +59,20 @@ public interface ArtistaControllerOpenApi {
             @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
     })
     public ResponseEntity<ArtistaResponse> criar(@RequestBody ArtistaRequest request);
+    
+    @Operation(
+            summary = "Atualizar artista",
+            description = "Atualiza os dados de um artista existente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Artista atualizado com sucesso",
+                    content = @Content(schema = @Schema(implementation = ArtistaResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content),
+            @ApiResponse(responseCode = "404", description = "Artista não encontrado", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+    })
+    public ResponseEntity<ArtistaResponse> atualizar(
+            @Parameter(description = "ID do artista") Long id,
+            @RequestBody ArtistaRequest request
+    );
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,11 +33,11 @@ public class ArtistaController implements ArtistaControllerOpenApi {
 	
     @GetMapping
     public ResponseEntity<Page<ArtistaResponse>> listar(
-            @RequestParam(required = false) String nome,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "nome") String sortBy,
-            @RequestParam(defaultValue = "asc") String sortDir
+        @RequestParam(required = false) String nome,
+        @RequestParam(defaultValue = "0") int page,
+        @RequestParam(defaultValue = "10") int size,
+        @RequestParam(defaultValue = "nome") String sortBy,
+        @RequestParam(defaultValue = "asc") String sortDir
     ) {
         logger.info("GET /api/v1/artistas - nome: {}, page: {}, size: {}", nome, page, size);
 
@@ -58,5 +59,16 @@ public class ArtistaController implements ArtistaControllerOpenApi {
 
         ArtistaResponse artista = artistaService.criar(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(artista);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ArtistaResponse> atualizar(
+        @PathVariable Long id,
+        @Valid @RequestBody ArtistaRequest request
+    ) {
+        logger.info("PUT /api/v1/artistas/{}", id);
+
+        ArtistaResponse artista = artistaService.atualizar(id, request);
+        return ResponseEntity.ok(artista);
     }
 }

@@ -1,5 +1,7 @@
 package com.projeto.backend.domain.artista;
 
+import java.time.LocalDateTime;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,5 +104,40 @@ public class ArtistaService {
         logger.info("Artista criado com ID: {}", artista.getId());
 
         return ArtistaResponse.fromEntity(artista);
+    }
+    
+    /**
+     * Atualiza um artista existente.
+     *
+     * @param id ID do artista
+     * @param request Novos dados
+     * @return ArtistaResponse atualizado
+     * @throws EntityNotFoundException Se não encontrar
+     */
+    @Transactional
+    public ArtistaResponse atualizar(Long id, ArtistaRequest request) {
+        logger.info("Atualizando artista ID: {}", id);
+
+        Artista artista = artistaRepository.findByIdAndAtivoTrue(id)
+                .orElseThrow(() -> new EntityNotFoundException("Artista não encontrado com ID: " + id));
+
+        if (!artista.getNome().equalsIgnoreCase(request.getNome()) &&
+                artistaRepository.existsByNomeIgnoreCase(request.getNome())) {
+            throw new IllegalArgumentException("Já existe um artista com este nome: " + request.getNome());
+        }
+
+        artista.setNome(request.getNome());
+        artista.setTipo(request.getTipo());
+        artista.setPaisOrigem(request.getPaisOrigem());
+        artista.setAnoFormacao(request.getAnoFormacao());
+        artista.setBiografia(request.getBiografia());
+
+        artista = artistaRepository.save(artista);
+        logger.info("Artista atualizado: {}", artista.getId());
+
+        var response = ArtistaResponse.fromEntity(artista);
+        response.setUpdatedAt(LocalDateTime.now());
+        
+        return response;
     }
 }
