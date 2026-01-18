@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -70,5 +71,13 @@ public class ArtistaController implements ArtistaControllerOpenApi {
 
         ArtistaResponse artista = artistaService.atualizar(id, request);
         return ResponseEntity.ok(artista);
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        logger.info("DELETE /api/v1/artistas/{}", id);
+
+        artistaService.deletar(id);
+        return ResponseEntity.noContent().build();
     }
 }

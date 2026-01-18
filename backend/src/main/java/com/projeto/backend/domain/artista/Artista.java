@@ -52,8 +52,8 @@ public class Artista {
     @Column(name = "biografia", columnDefinition = "TEXT")
     private String biografia;
 
-    @Column(name = "ativo", nullable = false)
-    private Boolean ativo = true;
+    @Column(name = "ativo", nullable = false, columnDefinition = "BOOLEAN")
+    private Boolean ativo;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -166,14 +166,14 @@ public class Artista {
     }
 
     public Boolean getAtivo() {
-        return ativo;
-    }
+		return ativo;
+	}
 
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
 
-    public LocalDateTime getCreatedAt() {
+	public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 

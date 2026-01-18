@@ -31,6 +31,9 @@ public class ArtistaResponse {
     @Schema(description = "Biografia")
     private String biografia;
 
+    @Schema(description = "Ativo")
+    private Boolean ativo;
+    
     @Schema(description = "Quantidade de álbuns", example = "7")
     private Integer totalAlbuns;
 
@@ -58,6 +61,8 @@ public class ArtistaResponse {
         response.setTotalAlbuns(artista.getTotalAlbuns());
         response.setCreatedAt(artista.getCreatedAt());
         response.setUpdatedAt(artista.getUpdatedAt());
+        response.setAtivo(artista.getAtivo());
+        
         return response;
     }
 
@@ -149,4 +154,12 @@ public class ArtistaResponse {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
 }

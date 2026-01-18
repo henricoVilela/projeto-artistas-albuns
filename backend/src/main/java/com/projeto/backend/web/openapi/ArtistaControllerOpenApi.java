@@ -75,4 +75,15 @@ public interface ArtistaControllerOpenApi {
             @Parameter(description = "ID do artista") Long id,
             @RequestBody ArtistaRequest request
     );
+    
+    @Operation(
+            summary = "Remover artista",
+            description = "Remove (inativa) um artista do sistema"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Artista removido com sucesso"),
+            @ApiResponse(responseCode = "404", description = "Artista não encontrado", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+    })
+    public ResponseEntity<Void> deletar(@Parameter(description = "ID do artista") Long id);
 }

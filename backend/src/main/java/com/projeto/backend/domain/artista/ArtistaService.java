@@ -140,4 +140,24 @@ public class ArtistaService {
         
         return response;
     }
+    
+    /**
+     * Remove (inativa) um artista.
+     *
+     * @param id ID do artista
+     * @throws EntityNotFoundException Se não encontrar
+     */
+    @Transactional
+    public void deletar(Long id) {
+        logger.info("Deletando artista ID: {}", id);
+
+        Artista artista = artistaRepository.findByIdAndAtivoTrue(id)
+                .orElseThrow(() -> new EntityNotFoundException("Artista não encontrado com ID: " + id));
+
+        // Soft delete
+        artista.setAtivo(false);
+        artistaRepository.save(artista);
+
+        logger.info("Artista inativado: {}", id);
+    }
 }
