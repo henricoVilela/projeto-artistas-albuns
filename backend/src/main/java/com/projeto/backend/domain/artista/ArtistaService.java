@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.projeto.backend.web.dto.artista.ArtistaRequest;
 import com.projeto.backend.web.dto.artista.ArtistaResponse;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -75,4 +76,31 @@ public class ArtistaService {
         return ArtistaResponse.fromEntity(artista);
     }
 
+    /**
+     * Cria um novo artista.
+     *
+     * @param request Dados do artista
+     * @return ArtistaResponse do artista criado
+     */
+    @Transactional
+    public ArtistaResponse criar(ArtistaRequest request) {
+        logger.info("Criando artista: {}", request.getNome());
+
+        if (artistaRepository.existsByNomeIgnoreCase(request.getNome())) {
+            throw new IllegalArgumentException("Já existe um artista com este nome: " + request.getNome());
+        }
+
+        Artista artista = new Artista();
+        artista.setNome(request.getNome());
+        artista.setTipo(request.getTipo());
+        artista.setPaisOrigem(request.getPaisOrigem());
+        artista.setAnoFormacao(request.getAnoFormacao());
+        artista.setBiografia(request.getBiografia());
+        artista.setAtivo(true);
+
+        artista = artistaRepository.save(artista);
+        logger.info("Artista criado com ID: {}", artista.getId());
+
+        return ArtistaResponse.fromEntity(artista);
+    }
 }

@@ -38,4 +38,12 @@ public interface ArtistaRepository extends JpaRepository<Artista, Long> {
      * @return Optional com o artista
      */
     Optional<Artista> findByIdAndAtivoTrue(Long id);
+    
+    /**
+     * Verifica se existe artista com o nome exato.
+     *
+     * @param nome Nome do artista
+     * @return true se existir
+     */
+    boolean existsByNomeIgnoreCase(String nome);
 }

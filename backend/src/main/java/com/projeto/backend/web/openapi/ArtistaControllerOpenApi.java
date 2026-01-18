@@ -3,11 +3,14 @@ package com.projeto.backend.web.openapi;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 
+import com.projeto.backend.web.dto.artista.ArtistaRequest;
 import com.projeto.backend.web.dto.artista.ArtistaResponse;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -33,5 +36,27 @@ public interface ArtistaControllerOpenApi {
             @Parameter(description = "Direção da ordenação (asc ou desc)") String sortDir
     );
     
+    @Operation(
+            summary = "Buscar artista por ID",
+            description = "Retorna os dados completos de um artista"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Artista encontrado",
+                    content = @Content(schema = @Schema(implementation = ArtistaResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Artista não encontrado", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+    })
     public ResponseEntity<ArtistaResponse> buscarPorId(@Parameter(description = "ID do artista") Long id);
+    
+    @Operation(
+            summary = "Criar artista",
+            description = "Cria um novo artista no sistema"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Artista criado com sucesso",
+                    content = @Content(schema = @Schema(implementation = ArtistaResponse.class))),
+            @ApiResponse(responseCode = "400", description = "Dados inválidos", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+    })
+    public ResponseEntity<ArtistaResponse> criar(@RequestBody ArtistaRequest request);
 }
