@@ -1,5 +1,7 @@
 package com.projeto.backend.web.controller;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.projeto.backend.domain.album.AlbumService;
 import com.projeto.backend.domain.artista.ArtistaService;
+import com.projeto.backend.web.dto.album.AlbumResponse;
 import com.projeto.backend.web.dto.artista.ArtistaRequest;
 import com.projeto.backend.web.dto.artista.ArtistaResponse;
 import com.projeto.backend.web.openapi.ArtistaControllerOpenApi;
@@ -31,6 +35,9 @@ public class ArtistaController implements ArtistaControllerOpenApi {
 	
 	@Autowired
 	private ArtistaService artistaService;
+	
+	@Autowired
+	private AlbumService albumService;
 	
     @GetMapping
     public ResponseEntity<Page<ArtistaResponse>> listar(
@@ -79,5 +86,16 @@ public class ArtistaController implements ArtistaControllerOpenApi {
 
         artistaService.deletar(id);
         return ResponseEntity.noContent().build();
+    }
+    
+    /**
+     * Lista álbuns de um artista.
+     */
+    @GetMapping("/{id}/albuns")
+    public ResponseEntity<List<AlbumResponse>> listarAlbuns(@PathVariable Long id) {
+        logger.info("GET /api/v1/artistas/{}/albuns", id);
+
+        List<AlbumResponse> albuns = albumService.listarTodosPorArtista(id);
+        return ResponseEntity.ok(albuns);
     }
 }

@@ -160,4 +160,17 @@ public class ArtistaService {
 
         logger.info("Artista inativado: {}", id);
     }
+    
+    /**
+     * Busca a entidade Artista por ID (uso interno).
+     *
+     * @param id ID do artista
+     * @return Entidade Artista
+     * @throws EntityNotFoundException Se não encontrar
+     */
+    @Transactional(readOnly = true)
+    public Artista buscarEntidadePorId(Long id) {
+        return artistaRepository.findByIdAndAtivoTrue(id)
+                .orElseThrow(() -> new EntityNotFoundException("Artista não encontrado com ID: " + id));
+    }
 }
