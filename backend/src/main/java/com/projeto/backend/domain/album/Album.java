@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.projeto.backend.domain.artista.Artista;
+import com.projeto.backend.shared.StringUtils;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -101,9 +102,7 @@ public class Album {
      */
     private String normalizarNome(String nome) {
         if (nome == null) return "";
-        return java.text.Normalizer.normalize(nome, java.text.Normalizer.Form.NFD)
-                .replaceAll("[\\p{InCombiningDiacriticalMarks}]", "")
-                .toLowerCase();
+        return StringUtils.normalizar(nome);
     }
 
     /**
