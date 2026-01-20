@@ -21,15 +21,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @SecurityRequirement(name = "bearerAuth")
 public interface AlbumCapaControllerOpenApi {
 	@Operation(
-            summary = "Upload de capa",
-            description = "Faz upload de uma imagem de capa para um álbum. Aceita apenas arquivos de imagem (JPEG, PNG, GIF, WebP) com tamanho máximo de 10MB."
+        summary = "Upload de capa",
+        description = "Faz upload de uma imagem de capa para um álbum. Aceita apenas arquivos de imagem (JPEG, PNG, GIF, WebP) com tamanho máximo de 10MB."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Capa enviada com sucesso",
-                    content = @Content(schema = @Schema(implementation = AlbumCapaResponse.class))),
-            @ApiResponse(responseCode = "400", description = "Arquivo inválido", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Álbum não encontrado", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+        @ApiResponse(responseCode = "201", description = "Capa enviada com sucesso",
+                content = @Content(schema = @Schema(implementation = AlbumCapaResponse.class))),
+        @ApiResponse(responseCode = "400", description = "Arquivo inválido", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Álbum não encontrado", content = @Content),
+        @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
     })
     public ResponseEntity<AlbumCapaResponse> upload(
         @Parameter(description = "ID do álbum") Long albumId,
@@ -38,18 +38,31 @@ public interface AlbumCapaControllerOpenApi {
     );
 	
 	@Operation(
-            summary = "Upload múltiplo de capas",
-            description = "Faz upload de múltiplas imagens de capa para um álbum. Aceita apenas arquivos de imagem com tamanho máximo de 10MB cada."
+        summary = "Upload múltiplo de capas",
+        description = "Faz upload de múltiplas imagens de capa para um álbum. Aceita apenas arquivos de imagem com tamanho máximo de 10MB cada."
     )
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Capas enviadas com sucesso"),
-            @ApiResponse(responseCode = "400", description = "Arquivo(s) inválido(s)", content = @Content),
-            @ApiResponse(responseCode = "404", description = "Álbum não encontrado", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+        @ApiResponse(responseCode = "201", description = "Capas enviadas com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Arquivo(s) inválido(s)", content = @Content),
+        @ApiResponse(responseCode = "404", description = "Álbum não encontrado", content = @Content),
+        @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
     })
     public ResponseEntity<List<AlbumCapaResponse>> uploadMultiple(
         @Parameter(description = "ID do álbum") Long albumId,
         @Parameter(description = "Lista de arquivos de imagem") List<MultipartFile> files,
         @Parameter(description = "Tipo das capas", example = "FRENTE") TipoCapa tipoCapa
+    );
+	
+	@Operation(
+            summary = "Listar capas do álbum",
+            description = "Retorna todas as capas de um álbum com URLs pré-assinadas (válidas por 30 minutos)"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Lista de capas retornada com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Álbum não encontrado", content = @Content),
+        @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+    })
+    public ResponseEntity<List<AlbumCapaResponse>> listarPorAlbum(
+        @Parameter(description = "ID do álbum") Long albumId
     );
 }

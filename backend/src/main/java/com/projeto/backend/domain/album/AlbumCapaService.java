@@ -89,4 +89,29 @@ public class AlbumCapaService {
                 .map(file -> upload(albumId, file, tipoCapa))
                 .collect(Collectors.toList());
     }
+    
+    /**
+     * Lista as capas de um álbum com URLs pré-assinadas.
+     *
+     * @param albumId ID do álbum
+     * @return Lista de capas com URLs
+     */
+    @Transactional(readOnly = true)
+    public List<AlbumCapaResponse> listarPorAlbum(Long albumId) {
+        logger.info("Listando capas do álbum ID: {}", albumId);
+
+        // Verifica se o álbum existe
+        if (!albumRepository.existsById(albumId)) {
+            throw new EntityNotFoundException("Álbum não encontrado com ID: " + albumId);
+        }
+
+        List<AlbumCapa> capas = albumCapaRepository.findByAlbumIdOrderByOrdemAsc(albumId);
+
+        return capas.stream()
+                .map(capa -> {
+                    String presignedUrl = storageService.getPresignedUrl(capa.getObjectKey());
+                    return AlbumCapaResponse.fromEntityWithUrl(capa, presignedUrl);
+                })
+                .collect(Collectors.toList());
+    }
 }

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,9 +30,6 @@ public class AlbumCapaController implements AlbumCapaControllerOpenApi {
 	@Autowired
     private AlbumCapaService albumCapaService;
 	
-	/**
-     * Faz upload de uma capa para um álbum.
-     */
     @PostMapping(value = "/albuns/{albumId}/capas", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<AlbumCapaResponse> upload(
 		@PathVariable Long albumId,
@@ -54,5 +52,13 @@ public class AlbumCapaController implements AlbumCapaControllerOpenApi {
 
         List<AlbumCapaResponse> responses = albumCapaService.uploadMultiple(albumId, files, tipoCapa);
         return ResponseEntity.status(HttpStatus.CREATED).body(responses);
+    }
+
+    @GetMapping("/albuns/{albumId}/capas")
+    public ResponseEntity<List<AlbumCapaResponse>> listarPorAlbum(@PathVariable Long albumId) {
+        logger.info("GET /api/v1/albuns/{}/capas", albumId);
+
+        List<AlbumCapaResponse> capas = albumCapaService.listarPorAlbum(albumId);
+        return ResponseEntity.ok(capas);
     }
 }
