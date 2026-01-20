@@ -131,4 +131,46 @@ public class AlbumCapaService {
         String presignedUrl = storageService.getPresignedUrl(capa.getObjectKey());
         return AlbumCapaResponse.fromEntityWithUrl(capa, presignedUrl);
     }
+    
+    /**
+     * Atualiza o tipo de uma capa.
+     *
+     * @param capaId ID da capa
+     * @param tipoCapa Novo tipo
+     * @return AlbumCapaResponse atualizado
+     */
+    @Transactional
+    public AlbumCapaResponse atualizarTipo(Long capaId, TipoCapa tipoCapa) {
+        logger.info("Atualizando tipo da capa ID: {} para {}", capaId, tipoCapa);
+
+        AlbumCapa capa = albumCapaRepository.findById(capaId)
+                .orElseThrow(() -> new EntityNotFoundException("Capa não encontrada com ID: " + capaId));
+
+        capa.setTipoCapa(tipoCapa);
+        capa = albumCapaRepository.save(capa);
+
+        String presignedUrl = storageService.getPresignedUrl(capa.getObjectKey());
+        return AlbumCapaResponse.fromEntityWithUrl(capa, presignedUrl);
+    }
+
+    /**
+     * Atualiza a ordem de uma capa.
+     *
+     * @param capaId ID da capa
+     * @param novaOrdem Nova ordem
+     * @return AlbumCapaResponse atualizado
+     */
+    @Transactional
+    public AlbumCapaResponse atualizarOrdem(Long capaId, Integer novaOrdem) {
+        logger.info("Atualizando ordem da capa ID: {} para {}", capaId, novaOrdem);
+
+        AlbumCapa capa = albumCapaRepository.findById(capaId)
+                .orElseThrow(() -> new EntityNotFoundException("Capa não encontrada com ID: " + capaId));
+
+        capa.setOrdem(novaOrdem);
+        capa = albumCapaRepository.save(capa);
+
+        String presignedUrl = storageService.getPresignedUrl(capa.getObjectKey());
+        return AlbumCapaResponse.fromEntityWithUrl(capa, presignedUrl);
+    }
 }

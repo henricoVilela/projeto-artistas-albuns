@@ -7,11 +7,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.projeto.backend.domain.album.TipoCapa;
 import com.projeto.backend.web.dto.album.AlbumCapaResponse;
+import com.projeto.backend.web.dto.album.AlbumCapaUpdateRequest;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -78,5 +80,20 @@ public interface AlbumCapaControllerOpenApi {
     })
     public ResponseEntity<AlbumCapaResponse> buscarPorId(
         @Parameter(description = "ID da capa") Long capaId
+    );
+	
+	@Operation(
+            summary = "Atualizar capa",
+            description = "Atualiza o tipo e/ou ordem de uma capa existente"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Capa atualizada com sucesso",
+                    content = @Content(schema = @Schema(implementation = AlbumCapaResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Capa não encontrada", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+    })
+    public ResponseEntity<AlbumCapaResponse> atualizar(
+            @Parameter(description = "ID da capa") Long capaId,
+            @RequestBody AlbumCapaUpdateRequest request
     );
 }

@@ -9,8 +9,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.projeto.backend.domain.album.AlbumCapaService;
 import com.projeto.backend.domain.album.TipoCapa;
 import com.projeto.backend.web.dto.album.AlbumCapaResponse;
+import com.projeto.backend.web.dto.album.AlbumCapaUpdateRequest;
 import com.projeto.backend.web.openapi.AlbumCapaControllerOpenApi;
 
 @RestController
@@ -67,6 +70,27 @@ public class AlbumCapaController implements AlbumCapaControllerOpenApi {
         logger.info("GET /api/v1/capas/{}", capaId);
 
         AlbumCapaResponse capa = albumCapaService.buscarPorId(capaId);
+        return ResponseEntity.ok(capa);
+    }
+
+
+    @PatchMapping("/capas/{capaId}")
+    public ResponseEntity<AlbumCapaResponse> atualizar(
+        @PathVariable Long capaId,
+        @RequestBody AlbumCapaUpdateRequest request
+    ) {
+        logger.info("PATCH /api/v1/capas/{}", capaId);
+
+        AlbumCapaResponse capa;
+
+        if (request.getTipoCapa() != null) {
+            capa = albumCapaService.atualizarTipo(capaId, request.getTipoCapa());
+        } else if (request.getOrdem() != null) {
+            capa = albumCapaService.atualizarOrdem(capaId, request.getOrdem());
+        } else {
+            capa = albumCapaService.buscarPorId(capaId);
+        }
+
         return ResponseEntity.ok(capa);
     }
 }
