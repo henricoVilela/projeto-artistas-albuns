@@ -65,4 +65,18 @@ public interface AlbumCapaControllerOpenApi {
     public ResponseEntity<List<AlbumCapaResponse>> listarPorAlbum(
         @Parameter(description = "ID do álbum") Long albumId
     );
+	
+	@Operation(
+            summary = "Buscar capa por ID",
+            description = "Retorna os dados de uma capa específica com URL pré-assinada"
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Capa encontrada",
+                    content = @Content(schema = @Schema(implementation = AlbumCapaResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Capa não encontrada", content = @Content),
+            @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+    })
+    public ResponseEntity<AlbumCapaResponse> buscarPorId(
+        @Parameter(description = "ID da capa") Long capaId
+    );
 }

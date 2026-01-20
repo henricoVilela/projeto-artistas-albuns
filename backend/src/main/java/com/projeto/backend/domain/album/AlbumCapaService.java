@@ -114,4 +114,21 @@ public class AlbumCapaService {
                 })
                 .collect(Collectors.toList());
     }
+    
+    /**
+     * Busca uma capa por ID com URL pré-assinada.
+     *
+     * @param capaId ID da capa
+     * @return AlbumCapaResponse com URL
+     */
+    @Transactional(readOnly = true)
+    public AlbumCapaResponse buscarPorId(Long capaId) {
+        logger.info("Buscando capa ID: {}", capaId);
+
+        AlbumCapa capa = albumCapaRepository.findById(capaId)
+                .orElseThrow(() -> new EntityNotFoundException("Capa não encontrada com ID: " + capaId));
+
+        String presignedUrl = storageService.getPresignedUrl(capa.getObjectKey());
+        return AlbumCapaResponse.fromEntityWithUrl(capa, presignedUrl);
+    }
 }

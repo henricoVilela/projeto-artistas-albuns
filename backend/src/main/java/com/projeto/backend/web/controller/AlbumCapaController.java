@@ -61,4 +61,12 @@ public class AlbumCapaController implements AlbumCapaControllerOpenApi {
         List<AlbumCapaResponse> capas = albumCapaService.listarPorAlbum(albumId);
         return ResponseEntity.ok(capas);
     }
+    
+    @GetMapping("/capas/{capaId}")
+    public ResponseEntity<AlbumCapaResponse> buscarPorId(@PathVariable Long capaId) {
+        logger.info("GET /api/v1/capas/{}", capaId);
+
+        AlbumCapaResponse capa = albumCapaService.buscarPorId(capaId);
+        return ResponseEntity.ok(capa);
+    }
 }
