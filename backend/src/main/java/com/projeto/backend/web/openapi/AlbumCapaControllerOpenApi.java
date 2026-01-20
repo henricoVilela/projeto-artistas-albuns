@@ -96,4 +96,17 @@ public interface AlbumCapaControllerOpenApi {
             @Parameter(description = "ID da capa") Long capaId,
             @RequestBody AlbumCapaUpdateRequest request
     );
+	
+	@Operation(
+        summary = "Remover capa",
+        description = "Remove uma capa do álbum e do armazenamento"
+    )
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Capa removida com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Capa não encontrada", content = @Content),
+        @ApiResponse(responseCode = "401", description = "Não autorizado", content = @Content)
+    })
+    public ResponseEntity<Void> deletar(
+        @Parameter(description = "ID da capa") Long capaId
+    );
 }

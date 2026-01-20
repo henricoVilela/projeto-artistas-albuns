@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import io.minio.GetPresignedObjectUrlArgs;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
+import io.minio.RemoveObjectArgs;
 import io.minio.http.Method;
 
 @Service
@@ -31,6 +32,17 @@ public class StorageService {
 
     @Value("${minio.presigned-url-expiration:30}")
     private int presignedUrlExpiration;
+    
+    /**
+     * Resultado do upload.
+     */
+    public record StorageResult(
+        String objectKey,
+        String originalFilename,
+        String contentType,
+        Long size,
+        String md5Hash
+    ) {}
     
     /**
      * Faz upload de um arquivo para o MinIO.
@@ -160,14 +172,24 @@ public class StorageService {
     }
     
     /**
-     * Resultado do upload.
+     * Remove um arquivo do MinIO.
+     *
+     * @param objectKey Chave do objeto no bucket
      */
-    public record StorageResult(
-        String objectKey,
-        String originalFilename,
-        String contentType,
-        Long size,
-        String md5Hash
-    ) {}
+    public void delete(String objectKey) {
+        try {
+            minioClient.removeObject(
+                RemoveObjectArgs.builder()
+                    .bucket(bucketName)
+                    .object(objectKey)
+                    .build()
+            );
 
+            logger.info("Arquivo removido com sucesso: {}", objectKey);
+
+        } catch (Exception e) {
+            logger.error("Erro ao remover arquivo: {}", e.getMessage());
+            throw new StorageException("Falha ao remover arquivo", e);
+        }
+    }
 }

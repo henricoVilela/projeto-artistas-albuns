@@ -173,4 +173,25 @@ public class AlbumCapaService {
         String presignedUrl = storageService.getPresignedUrl(capa.getObjectKey());
         return AlbumCapaResponse.fromEntityWithUrl(capa, presignedUrl);
     }
+    
+    /**
+     * Remove uma capa do álbum e do MinIO.
+     *
+     * @param capaId ID da capa
+     */
+    @Transactional
+    public void deletar(Long capaId) {
+        logger.info("Removendo capa ID: {}", capaId);
+
+        AlbumCapa capa = albumCapaRepository.findById(capaId)
+                .orElseThrow(() -> new EntityNotFoundException("Capa não encontrada com ID: " + capaId));
+
+        // Remove do MinIO
+        storageService.delete(capa.getObjectKey());
+
+        // Remove do banco
+        albumCapaRepository.delete(capa);
+
+        logger.info("Capa removida com sucesso: {}", capaId);
+    }
 }
