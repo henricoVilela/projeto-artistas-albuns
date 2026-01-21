@@ -9,7 +9,7 @@ spring:
       minimum-idle: 2
       maximum-pool-size: 10
   jpa:
-    show-sql: true
+    show-sql: false
   flyway:
     clean-disabled: false
 
@@ -19,6 +19,6 @@ logging:
     root: INFO
     com.projeto: DEBUG
     org.springframework.security: DEBUG
-    org.hibernate.SQL: DEBUG
+    org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
     org.flywaydb: DEBUG
