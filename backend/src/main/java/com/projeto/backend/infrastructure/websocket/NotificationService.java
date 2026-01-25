@@ -20,10 +20,10 @@ public class NotificationService {
 	
     public void notifyArtistaCreated(Long artistaId, String nome) {
         NotificationMessage message = new NotificationMessage(
-                NotificationType.ARTISTA_CREATED,
-                "Novo artista cadastrado: " + nome,
-                new ArtistaPayload(artistaId, nome),
-                LocalDateTime.now()
+            NotificationType.ARTISTA_CREATED,
+            "Novo artista cadastrado: " + nome,
+            new ArtistaPayload(artistaId, nome),
+            LocalDateTime.now()
         );
         send("/topic/artistas", message);
         logger.info("Notificação enviada: Artista criado - {}", nome);
@@ -31,10 +31,10 @@ public class NotificationService {
 
     public void notifyArtistaUpdated(Long artistaId, String nome) {
         NotificationMessage message = new NotificationMessage(
-                NotificationType.ARTISTA_UPDATED,
-                "Artista atualizado: " + nome,
-                new ArtistaPayload(artistaId, nome),
-                LocalDateTime.now()
+            NotificationType.ARTISTA_UPDATED,
+            "Artista atualizado: " + nome,
+            new ArtistaPayload(artistaId, nome),
+            LocalDateTime.now()
         );
         send("/topic/artistas", message);
         logger.info("Notificação enviada: Artista atualizado - {}", nome);
@@ -42,10 +42,10 @@ public class NotificationService {
 
     public void notifyArtistaDeleted(Long artistaId) {
         NotificationMessage message = new NotificationMessage(
-                NotificationType.ARTISTA_DELETED,
-                "Artista removido",
-                new ArtistaPayload(artistaId, null),
-                LocalDateTime.now()
+            NotificationType.ARTISTA_DELETED,
+            "Artista removido",
+            new ArtistaPayload(artistaId, null),
+            LocalDateTime.now()
         );
         send("/topic/artistas", message);
         logger.info("Notificação enviada: Artista removido - ID {}", artistaId);
@@ -56,10 +56,10 @@ public class NotificationService {
      */
     public void notifyAlbumCreated(Long albumId, String nome, String artistaNome) {
         NotificationMessage message = new NotificationMessage(
-                NotificationType.ALBUM_CREATED,
-                "Novo álbum cadastrado: " + nome + " - " + artistaNome,
-                new AlbumPayload(albumId, nome, artistaNome),
-                LocalDateTime.now()
+            NotificationType.ALBUM_CREATED,
+            "Novo álbum cadastrado: " + nome + " - " + artistaNome,
+            new AlbumPayload(albumId, nome, artistaNome),
+            LocalDateTime.now()
         );
         send("/topic/albuns", message);
         logger.info("Notificação enviada: Álbum criado - {}", nome);
@@ -67,10 +67,10 @@ public class NotificationService {
 
     public void notifyAlbumUpdated(Long albumId, String nome, String artistaNome) {
         NotificationMessage message = new NotificationMessage(
-                NotificationType.ALBUM_UPDATED,
-                "Álbum atualizado: " + nome,
-                new AlbumPayload(albumId, nome, artistaNome),
-                LocalDateTime.now()
+            NotificationType.ALBUM_UPDATED,
+            "Álbum atualizado: " + nome,
+            new AlbumPayload(albumId, nome, artistaNome),
+            LocalDateTime.now()
         );
         send("/topic/albuns", message);
         logger.info("Notificação enviada: Álbum atualizado - {}", nome);
@@ -78,10 +78,10 @@ public class NotificationService {
 
     public void notifyAlbumDeleted(Long albumId) {
         NotificationMessage message = new NotificationMessage(
-                NotificationType.ALBUM_DELETED,
-                "Álbum removido",
-                new AlbumPayload(albumId, null, null),
-                LocalDateTime.now()
+            NotificationType.ALBUM_DELETED,
+            "Álbum removido",
+            new AlbumPayload(albumId, null, null),
+            LocalDateTime.now()
         );
         send("/topic/albuns", message);
         logger.info("Notificação enviada: Álbum removido - ID {}", albumId);
@@ -89,10 +89,10 @@ public class NotificationService {
     
     public void notifySyncStarted() {
         NotificationMessage message = new NotificationMessage(
-                NotificationType.SYNC_STARTED,
-                "Sincronização com API externa iniciada",
-                null,
-                LocalDateTime.now()
+            NotificationType.SYNC_STARTED,
+            "Sincronização com API externa iniciada",
+            null,
+            LocalDateTime.now()
         );
         send("/topic/sync", message);
         logger.info("Notificação enviada: Sincronização iniciada");
@@ -101,11 +101,11 @@ public class NotificationService {
     public void notifySyncCompleted(int totalSincronizados, int novos, int atualizados) {
         SyncPayload payload = new SyncPayload(totalSincronizados, novos, atualizados);
         NotificationMessage message = new NotificationMessage(
-                NotificationType.SYNC_COMPLETED,
-                String.format("Sincronização concluída: %d registros (%d novos, %d atualizados)",
-                        totalSincronizados, novos, atualizados),
-                payload,
-                LocalDateTime.now()
+            NotificationType.SYNC_COMPLETED,
+            String.format("Sincronização concluída: %d registros (%d novos, %d atualizados)",
+                    totalSincronizados, novos, atualizados),
+            payload,
+            LocalDateTime.now()
         );
         send("/topic/sync", message);
         logger.info("Notificação enviada: Sincronização concluída - {} registros", totalSincronizados);
@@ -113,13 +113,24 @@ public class NotificationService {
 
     public void notifySyncError(String errorMessage) {
         NotificationMessage message = new NotificationMessage(
-                NotificationType.SYNC_ERROR,
-                "Erro na sincronização: " + errorMessage,
-                null,
-                LocalDateTime.now()
+            NotificationType.SYNC_ERROR,
+            "Erro na sincronização: " + errorMessage,
+            null,
+            LocalDateTime.now()
         );
         send("/topic/sync", message);
         logger.warn("Notificação enviada: Erro na sincronização - {}", errorMessage);
+    }
+    
+    public void notifySystem(String systemMessage) {
+        NotificationMessage message = new NotificationMessage(
+            NotificationType.SYSTEM,
+            systemMessage,
+            null,
+            LocalDateTime.now()
+        );
+        send("/topic/system", message);
+        logger.info("Notificação de sistema enviada: {}", systemMessage);
     }
     
     private void send(String destination, NotificationMessage message) {
@@ -140,6 +151,7 @@ public class NotificationService {
         SYNC_STARTED,
         SYNC_COMPLETED,
         SYNC_ERROR,
+        SYSTEM
     }
 
     public record NotificationMessage(
