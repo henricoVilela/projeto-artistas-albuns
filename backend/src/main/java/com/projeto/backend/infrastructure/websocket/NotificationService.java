@@ -87,6 +87,41 @@ public class NotificationService {
         logger.info("Notificação enviada: Álbum removido - ID {}", albumId);
     }
     
+    public void notifySyncStarted() {
+        NotificationMessage message = new NotificationMessage(
+                NotificationType.SYNC_STARTED,
+                "Sincronização com API externa iniciada",
+                null,
+                LocalDateTime.now()
+        );
+        send("/topic/sync", message);
+        logger.info("Notificação enviada: Sincronização iniciada");
+    }
+
+    public void notifySyncCompleted(int totalSincronizados, int novos, int atualizados) {
+        SyncPayload payload = new SyncPayload(totalSincronizados, novos, atualizados);
+        NotificationMessage message = new NotificationMessage(
+                NotificationType.SYNC_COMPLETED,
+                String.format("Sincronização concluída: %d registros (%d novos, %d atualizados)",
+                        totalSincronizados, novos, atualizados),
+                payload,
+                LocalDateTime.now()
+        );
+        send("/topic/sync", message);
+        logger.info("Notificação enviada: Sincronização concluída - {} registros", totalSincronizados);
+    }
+
+    public void notifySyncError(String errorMessage) {
+        NotificationMessage message = new NotificationMessage(
+                NotificationType.SYNC_ERROR,
+                "Erro na sincronização: " + errorMessage,
+                null,
+                LocalDateTime.now()
+        );
+        send("/topic/sync", message);
+        logger.warn("Notificação enviada: Erro na sincronização - {}", errorMessage);
+    }
+    
     private void send(String destination, NotificationMessage message) {
         try {
             messagingTemplate.convertAndSend(destination, message);
@@ -102,6 +137,9 @@ public class NotificationService {
         ALBUM_CREATED,
         ALBUM_UPDATED,
         ALBUM_DELETED,
+        SYNC_STARTED,
+        SYNC_COMPLETED,
+        SYNC_ERROR,
     }
 
     public record NotificationMessage(
@@ -114,4 +152,6 @@ public class NotificationService {
     public record ArtistaPayload(Long id, String nome) {}
     
     public record AlbumPayload(Long id, String nome, String artistaNome) {}
+    
+    public record SyncPayload(int total, int novos, int atualizados) {}
 }
