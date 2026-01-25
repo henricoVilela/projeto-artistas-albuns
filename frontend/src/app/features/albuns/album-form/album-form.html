@@ -1,0 +1,160 @@
+<app-layout>
+    <div class="max-w-2xl mx-auto space-y-6">
+    <!-- Header -->
+    <div class="flex items-center gap-4">
+        <a routerLink="/albuns" class="text-gray-500 hover:text-gray-700">
+        ← Voltar
+        </a>
+        <h1 class="text-2xl font-bold text-gray-900">
+        {{ isEditing() ? 'Editar Álbum' : 'Novo Álbum' }}
+        </h1>
+    </div>
+    
+    @if (loadingData()) {
+        <app-loading [fullPage]="true" text="Carregando..." />
+    } @else {
+        <div class="card card-body">
+        <form [formGroup]="form" (ngSubmit)="onSubmit()" class="space-y-6">
+            <!-- Artista -->
+            <div>
+            <label for="artistaId" class="label">Artista *</label>
+            <select
+                id="artistaId"
+                formControlName="artistaId"
+                class="input"
+                [class.input-error]="isFieldInvalid('artistaId')"
+            >
+                <option [ngValue]="null">Selecione o artista</option>
+                @for (artista of artistas(); track artista.id) {
+                <option [ngValue]="artista.id">{{ artista.nome }} ({{ artista.tipoDescricao }})</option>
+                }
+            </select>
+            @if (isFieldInvalid('artistaId')) {
+                <p class="error-message">Artista é obrigatório</p>
+            }
+            </div>
+            
+            <!-- Nome -->
+            <div>
+            <label for="nome" class="label">Nome do Álbum *</label>
+            <input
+                type="text"
+                id="nome"
+                formControlName="nome"
+                class="input"
+                [class.input-error]="isFieldInvalid('nome')"
+                placeholder="Nome do álbum"
+            />
+            @if (isFieldInvalid('nome')) {
+                <p class="error-message">Nome é obrigatório (2-300 caracteres)</p>
+            }
+            </div>
+            
+            <!-- Ano de Lançamento -->
+            <div>
+            <label for="anoLancamento" class="label">Ano de Lançamento</label>
+            <input
+                type="number"
+                id="anoLancamento"
+                formControlName="anoLancamento"
+                class="input"
+                [class.input-error]="isFieldInvalid('anoLancamento')"
+                placeholder="Ex: 2000"
+                min="1900"
+                [max]="currentYear"
+            />
+            @if (isFieldInvalid('anoLancamento')) {
+                <p class="error-message">Ano deve estar entre 1900 e {{ currentYear }}</p>
+            }
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Gravadora -->
+            <div>
+                <label for="gravadora" class="label">Gravadora</label>
+                <input
+                type="text"
+                id="gravadora"
+                formControlName="gravadora"
+                class="input"
+                placeholder="Ex: Universal Music"
+                />
+            </div>
+            
+            <!-- Gênero -->
+            <div>
+                <label for="genero" class="label">Gênero</label>
+                <input
+                type="text"
+                id="genero"
+                formControlName="genero"
+                class="input"
+                placeholder="Ex: Rock"
+                />
+            </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <!-- Total de Faixas -->
+            <div>
+                <label for="totalFaixas" class="label">Total de Faixas</label>
+                <input
+                type="number"
+                id="totalFaixas"
+                formControlName="totalFaixas"
+                class="input"
+                placeholder="Ex: 12"
+                min="1"
+                max="999"
+                />
+            </div>
+            
+            <!-- Duração Total -->
+            <div>
+                <label for="duracaoTotal" class="label">Duração Total (segundos)</label>
+                <input
+                type="number"
+                id="duracaoTotal"
+                formControlName="duracaoTotal"
+                class="input"
+                placeholder="Ex: 3600"
+                min="1"
+                />
+            </div>
+            </div>
+            
+            <!-- Descrição -->
+            <div>
+            <label for="descricao" class="label">Descrição</label>
+            <textarea
+                id="descricao"
+                formControlName="descricao"
+                class="input min-h-25"
+                placeholder="Descrição do álbum..."
+                rows="3"
+            ></textarea>
+            </div>
+            
+            <!-- Actions -->
+            <div class="flex justify-end gap-4 pt-4 border-t">
+            <a routerLink="/albuns" class="btn btn-secondary">
+                Cancelar
+            </a>
+            <button
+                type="submit"
+                class="btn btn-primary"
+                [disabled]="saving()"
+            >
+                @if (saving()) {
+                <app-loading size="sm" />
+                <span class="ml-2">Salvando...</span>
+                } @else {
+                {{ isEditing() ? 'Salvar Alterações' : 'Cadastrar' }}
+                }
+            </button>
+            </div>
+        </form>
+        </div>
+    }
+    </div>
+</app-layout>

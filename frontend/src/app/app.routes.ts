@@ -31,9 +31,13 @@ export const routes: Routes = [
                 loadComponent: () => import('./features/albuns/album-list/album-list').then(m => m.AlbumList)
             },
             {
+                path: 'novo',
+                loadComponent: () => import('./features/albuns/album-form/album-form').then(m => m.AlbumForm)
+            },
+            {
                 path: ':id',
                 loadComponent: () => import('./features/albuns/album-detail/album-detail').then(m => m.AlbumDetail)
-            }
+            },
         ]
     },
     {
