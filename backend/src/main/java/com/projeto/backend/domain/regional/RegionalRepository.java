@@ -1,5 +1,6 @@
 package com.projeto.backend.domain.regional;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.domain.Page;
@@ -28,5 +29,10 @@ public interface RegionalRepository extends JpaRepository<Regional, Integer> {
      * Conta regionais ativas.
      */
     long countByAtivoTrue();
+    
+    /**
+     * Busca regionais ativas.
+     */
+    List<Regional> findByAtivoTrueOrderByNomeAsc();
 
 }

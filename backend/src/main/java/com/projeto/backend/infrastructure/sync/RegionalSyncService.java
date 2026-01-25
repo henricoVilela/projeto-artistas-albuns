@@ -86,7 +86,6 @@ public class RegionalSyncService {
                 Optional<Regional> existente = regionalRepository.findByExternalId(external.id());
 
                 if (existente.isPresent()) {
-                    // Atualiza registro existente
                     Regional regional = existente.get();
                     if (!regional.getNome().equals(external.nome())) {
                         regional.setNome(external.nome());
@@ -94,7 +93,6 @@ public class RegionalSyncService {
                         atualizados++;
                     }
                 } else {
-                    // Cria novo registro
                     Regional novaRegional = new Regional(external.nome(), external.id());
                     regionalRepository.save(novaRegional);
                     novos++;

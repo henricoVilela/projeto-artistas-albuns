@@ -1,5 +1,8 @@
 package com.projeto.backend.domain.regional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,5 +39,15 @@ public class RegionalService {
         }
 
         return pageResult.map(RegionalResponse::fromEntity);
+    }
+	
+	@Transactional(readOnly = true)
+    public List<RegionalResponse> listarTodas() {
+        logger.info("Listando todas as regionais ativas");
+
+        return regionalRepository.findByAtivoTrueOrderByNomeAsc()
+                .stream()
+                .map(RegionalResponse::fromEntity)
+                .collect(Collectors.toList());
     }
 }

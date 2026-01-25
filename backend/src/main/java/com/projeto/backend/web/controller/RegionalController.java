@@ -1,5 +1,6 @@
 package com.projeto.backend.web.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -66,4 +67,12 @@ public class RegionalController implements RegionalControllerOpenApi {
         ));
     }
 
+ 
+    @GetMapping("/todas")
+    public ResponseEntity<List<RegionalResponse>> listarTodas() {
+        logger.info("GET /api/v1/regionais/todas");
+
+        List<RegionalResponse> regionais = regionalService.listarTodas();
+        return ResponseEntity.ok(regionais);
+    }
 }
