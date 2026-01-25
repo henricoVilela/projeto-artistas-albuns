@@ -1,0 +1,192 @@
+<app-layout>
+    @if (loading()) {
+    <app-loading [fullPage]="true" text="Carregando álbum..." />
+    } @else if (album()) {
+    <div class="space-y-6">
+        <!-- Header -->
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-4">
+            <a routerLink="/albuns" class="text-gray-500 hover:text-gray-700">
+            ← Voltar
+            </a>
+            <div>
+            <h1 class="text-2xl font-bold text-gray-900">{{ album()!.nome }}</h1>
+            <a 
+                [routerLink]="['/artistas', album()!.artistaId]"
+                class="text-primary-600 hover:text-primary-700"
+            >
+                {{ album()!.artistaNome }}
+            </a>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <a 
+            [routerLink]="['/albuns', album()!.id, 'editar']"
+            class="btn btn-outline"
+            >
+            Editar
+            </a>
+            <button (click)="showDeleteDialog.set(true)" class="btn btn-danger">
+            Excluir
+            </button>
+        </div>
+        </div>
+        
+        <!-- Info -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="lg:col-span-2 card card-body">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Informações</h2>
+            <dl class="grid grid-cols-2 gap-4">
+            <div>
+                <dt class="text-sm text-gray-500">Artista</dt>
+                <dd class="font-medium">{{ album()!.artistaNome }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm text-gray-500">Ano de Lançamento</dt>
+                <dd class="font-medium">{{ album()!.anoLancamento || '-' }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm text-gray-500">Gravadora</dt>
+                <dd class="font-medium">{{ album()!.gravadora || '-' }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm text-gray-500">Gênero</dt>
+                <dd class="font-medium">
+                @if (album()!.genero) {
+                    <span class="badge badge-info">{{ album()!.genero }}</span>
+                } @else {
+                    -
+                }
+                </dd>
+            </div>
+            <div>
+                <dt class="text-sm text-gray-500">Total de Faixas</dt>
+                <dd class="font-medium">{{ album()!.totalFaixas || '-' }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm text-gray-500">Duração</dt>
+                <dd class="font-medium">{{ formatDuration(album()!.duracaoTotal) }}</dd>
+            </div>
+            <div>
+                <dt class="text-sm text-gray-500">Status</dt>
+                <dd>
+                @if (album()!.ativo) {
+                    <span class="badge badge-success">Ativo</span>
+                } @else {
+                    <span class="badge badge-danger">Inativo</span>
+                }
+                </dd>
+            </div>
+            </dl>
+            
+            @if (album()!.descricao) {
+            <div class="mt-6 pt-6 border-t">
+                <h3 class="text-sm font-medium text-gray-500 mb-2">Descrição</h3>
+                <p class="text-gray-700 whitespace-pre-line">{{ album()!.descricao }}</p>
+            </div>
+            }
+        </div>
+        
+        <!-- Upload de Capa -->
+        <div class="card card-body">
+            <h2 class="text-lg font-semibold text-gray-900 mb-4">Capas</h2>
+            
+            <!-- Upload Form -->
+            <div class="mb-4">
+            <input
+                type="file"
+                #fileInput
+                (change)="onFileSelected($event)"
+                accept="image/*"
+                class="hidden"
+            />
+            <select
+                [(ngModel)]="selectedTipoCapa"
+                class="input mb-2"
+            >
+                @for (tipo of tiposCapa; track tipo.value) {
+                <option [value]="tipo.value">{{ tipo.label }}</option>
+                }
+            </select>
+            <button 
+                (click)="fileInput.click()"
+                class="btn btn-primary w-full"
+                [disabled]="uploading()"
+            >
+                @if (uploading()) {
+                <app-loading size="sm" />
+                <span class="ml-2">Enviando...</span>
+                } @else {
+                📷 Upload de Capa
+                }
+            </button>
+            </div>
+            
+            <!-- Capas List -->
+            @if (loadingCapas()) {
+            <app-loading size="sm" text="Carregando capas..." />
+            } @else if (capas().length === 0) {
+            <p class="text-gray-500 text-center py-4 text-sm">
+                Nenhuma capa cadastrada
+            </p>
+            } @else {
+            <div class="space-y-3">
+                @for (capa of capas(); track capa.id) {
+                <div class="flex items-center gap-3 p-2 border rounded-lg">
+                    @if (capa.url) {
+                    <img 
+                        [src]="capa.url" 
+                        [alt]="capa.nomeArquivo"
+                        class="w-16 h-16 object-cover rounded"
+                    />
+                    } @else {
+                    <div class="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
+                        📷
+                    </div>
+                    }
+                    <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-gray-900 truncate">
+                        {{ capa.nomeArquivo }}
+                    </p>
+                    <p class="text-xs text-gray-500">
+                        {{ getTipoCapaLabel(capa.tipoCapa) }}
+                    </p>
+                    </div>
+                    <button 
+                    (click)="confirmDeleteCapa(capa)"
+                    class="text-red-600 hover:text-red-700 p-1"
+                    title="Remover"
+                    >
+                    🗑️
+                    </button>
+                </div>
+                }
+            </div>
+            }
+        </div>
+        </div>
+    </div>
+    
+    <!-- Delete Album Confirmation -->
+    <app-confirm-dialog
+        [isOpen]="showDeleteDialog()"
+        title="Excluir Álbum"
+        [message]="'Tem certeza que deseja excluir o álbum ' + album()!.nome + '?'"
+        confirmText="Excluir"
+        type="danger"
+        (confirm)="deleteAlbum()"
+        (cancel)="showDeleteDialog.set(false)"
+    />
+    
+    <!-- Delete Capa Confirmation -->
+    <app-confirm-dialog
+        [isOpen]="showDeleteCapaDialog()"
+        title="Excluir Capa"
+        message="Tem certeza que deseja excluir esta capa?"
+        confirmText="Excluir"
+        type="danger"
+        (confirm)="deleteCapa()"
+        (cancel)="showDeleteCapaDialog.set(false)"
+    />
+    }
+</app-layout>

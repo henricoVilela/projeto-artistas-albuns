@@ -29,7 +29,15 @@ export const routes: Routes = [
             {
                 path: '',
                 loadComponent: () => import('./features/albuns/album-list/album-list').then(m => m.AlbumList)
+            },
+            {
+                path: ':id',
+                loadComponent: () => import('./features/albuns/album-detail/album-detail').then(m => m.AlbumDetail)
             }
         ]
     },
+    {
+        path: '**',
+        redirectTo: 'dashboard'
+    }
 ];
