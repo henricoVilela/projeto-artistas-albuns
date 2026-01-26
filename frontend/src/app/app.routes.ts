@@ -45,6 +45,16 @@ export const routes: Routes = [
         ]
     },
     {
+        path: 'artistas',
+        canActivate: [authGuard],
+        children: [
+            {
+                path: '',
+                loadComponent: () => import('./features/artistas/artista-list/artista-list').then(m => m.ArtistaList)
+            },
+        ]
+    },
+    {
         path: '**',
         redirectTo: 'dashboard'
     }
