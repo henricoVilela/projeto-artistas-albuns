@@ -1,5 +1,14 @@
 import { Routes } from '@angular/router';
 import { authGuard, guestGuard } from './core/guards/auth.guard';
+import { ArtistaList } from './features/artistas/artista-list/artista-list';
+import { ArtistaForm } from './features/artistas/artista-form/artista-form';
+import { ArtistaDetail } from './features/artistas/artista-detail/artista-detail';
+import { Login } from './features/auth/login/login';
+import { Dashboard } from './features/dashboard/dashboard';
+import { Register } from './features/auth/register/register';
+import { AlbumList } from './features/albuns/album-list/album-list';
+import { AlbumForm } from './features/albuns/album-form/album-form';
+import { AlbumDetail } from './features/albuns/album-detail/album-detail';
 
 export const routes: Routes = [
     {
@@ -9,17 +18,17 @@ export const routes: Routes = [
     },
     {
         path: 'login',
-        loadComponent: () => import('./features/auth/login/login').then(m => m.Login),
+        component: Login,
         canActivate: [guestGuard]
     },
     {
         path: 'dashboard',
-        loadComponent: () => import('./features/dashboard/dashboard').then(m => m.Dashboard),
+        component: Dashboard,
         canActivate: [authGuard]
     },
     {
         path: 'register',
-        loadComponent: () => import('./features/auth/register/register').then(m => m.Register),
+        component: Register,
         canActivate: [guestGuard]
     },
     {
@@ -28,19 +37,19 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                loadComponent: () => import('./features/albuns/album-list/album-list').then(m => m.AlbumList)
+                component: AlbumList,
             },
             {
                 path: 'novo',
-                loadComponent: () => import('./features/albuns/album-form/album-form').then(m => m.AlbumForm)
+                component: AlbumForm,
             },
             {
                 path: ':id',
-                loadComponent: () => import('./features/albuns/album-detail/album-detail').then(m => m.AlbumDetail)
+                component: AlbumDetail,
             },
             {
                 path: ':id/editar',
-                loadComponent: () => import('./features/albuns/album-form/album-form').then(m => m.AlbumForm)
+                component: AlbumForm,
             }
         ]
     },
@@ -50,11 +59,19 @@ export const routes: Routes = [
         children: [
             {
                 path: '',
-                loadComponent: () => import('./features/artistas/artista-list/artista-list').then(m => m.ArtistaList)
+                component: ArtistaList,
+            },
+            {
+                path: 'novo',
+                component: ArtistaForm,
             },
             {
                 path: ':id',
-                loadComponent: () => import('./features/artistas/artista-detail/artista-detail').then(m => m.ArtistaDetail)
+                component: ArtistaDetail,
+            },
+            {
+                path: ':id/editar',
+                component: ArtistaForm,
             }
         ]
     },
