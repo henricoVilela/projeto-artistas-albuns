@@ -63,10 +63,10 @@ import { AuthService } from '../../../core/services/auth.service';
             </div>
             <button 
               (click)="authService.logout()"
-              class="text-gray-500 hover:text-gray-700"
+              class="text-red-500 hover:text-red-700 cursor-pointer"
               title="Sair"
             >
-              🚪
+             Sair
             </button>
           </div>
         </div>

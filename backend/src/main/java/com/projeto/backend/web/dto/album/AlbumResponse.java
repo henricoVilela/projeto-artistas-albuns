@@ -52,6 +52,9 @@ public class AlbumResponse {
 
     @Schema(description = "Data de atualização")
     private LocalDateTime updatedAt;
+    
+    @Schema(description = "Ativo")
+    private Boolean ativo;
 
     // Construtores
     public AlbumResponse() {
@@ -75,6 +78,7 @@ public class AlbumResponse {
         response.setTotalCapas(album.getTotalCapas());
         response.setCreatedAt(album.getCreatedAt());
         response.setUpdatedAt(album.getUpdatedAt());
+        response.setAtivo(album.getAtivo());
         return response;
     }
 
@@ -210,4 +214,13 @@ public class AlbumResponse {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
+	}
+    
 }
