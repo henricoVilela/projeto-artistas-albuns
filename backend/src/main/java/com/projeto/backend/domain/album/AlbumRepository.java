@@ -3,6 +3,8 @@ package com.projeto.backend.domain.album;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -34,4 +36,13 @@ public interface AlbumRepository extends JpaRepository<Album, Long>, JpaSpecific
      */
     @Query("SELECT DISTINCT al.genero FROM Album al WHERE al.ativo = true AND al.genero IS NOT NULL ORDER BY al.genero")
     List<String> findDistinctGeneros();
+    
+    /**
+     * Busca todos os álbuns ativos com paginação.
+     *
+     * @param pageable Configuração de paginação
+     * @return Página de álbuns
+     */
+    Page<Album> findByAtivoTrue(Pageable pageable);
+    
 }
