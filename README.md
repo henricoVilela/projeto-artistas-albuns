@@ -58,3 +58,83 @@ docker compose up -d
 | **MinIO Console** | http://localhost:9001 | minioadmin / minioadmin123 |
 
 ---
+
+
+## 🐳 Comandos Docker
+
+### Iniciar todos os serviços
+```bash
+docker compose up -d
+```
+
+### Ver logs
+```bash
+# Todos os serviços
+docker compose logs -f
+
+# Serviço específico
+docker compose logs -f backend
+docker compose logs -f frontend
+```
+
+### Parar serviços
+```bash
+docker compose down
+```
+
+### Parar e remover volumes (reset completo)
+```bash
+docker compose down -v
+```
+
+## 🔐 Autenticação
+
+O sistema utiliza **JWT (JSON Web Token)** para autenticação:
+
+- **Access Token**: Expira em 5 minutos
+- **Refresh Token**: Expira em 24 horas
+
+### Usuário padrão
+```
+Username: admin
+Password: admin123
+```
+
+---
+
+## 🧪 Testes
+
+### Backend
+```bash
+cd backend
+./mvnw test
+```
+
+### Cobertura dos Testes
+- ArtistaService
+- AlbumService
+- AuthService
+- JwtService
+- RateLimitService
+
+---
+
+## 📊 Funcionalidades
+
+- [x] Autenticação JWT com refresh token
+- [x] CRUD completo de artistas
+- [x] CRUD completo de álbuns
+- [x] Upload de capas (MinIO)
+- [x] Rate limiting (100 req/min)
+- [x] WebSocket para notificações
+- [x] Paginação e filtros
+- [x] Soft delete
+- [x] Swagger/OpenAPI
+- [x] Frontend responsivo
+- [x] Testes unitários
+
+---
+
+## 📄 Licença
+
+Este projeto foi desenvolvido para fins de demonstração técnica.
