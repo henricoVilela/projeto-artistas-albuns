@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Layout } from '../../../shared/components/layout/layout.component';
 import { Loading } from '../../../shared/components/loaging/loading.component';
 import { Pagination } from '../../../shared/components/pagination/pagination.component';
@@ -8,6 +8,8 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../../core/services/toast.service';
 import { ArtistaService } from '../../../core/services/artista.service';
 import { Artista } from '../../../core/models/artista.model';
+import { WebSocketService } from '../../../core/services/websocket.service';
+import { Subject, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-artista-list',
@@ -21,9 +23,11 @@ import { Artista } from '../../../core/models/artista.model';
   ],
   templateUrl: './artista-list.html',
 })
-export class ArtistaList implements OnInit {
+export class ArtistaList implements OnInit, OnDestroy {
   private artistaService = inject(ArtistaService);
   private toastService = inject(ToastService);
+  private wsService = inject(WebSocketService);
+  private destroy$ = new Subject<void>();
 
   loading = signal(true);
   artistas = signal<Artista[]>([]);
@@ -38,6 +42,21 @@ export class ArtistaList implements OnInit {
 
   ngOnInit(): void {
     this.loadArtistas();
+    this.subscribeToNotifications();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private subscribeToNotifications(): void {
+    this.wsService.onArtistaChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        // Recarrega a lista quando houver mudanças
+        this.loadArtistas();
+      });
   }
 
   loadArtistas(): void {
