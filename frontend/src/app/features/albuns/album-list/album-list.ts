@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { Layout } from '../../../shared/components/layout/layout.component';
 import { Loading } from '../../../shared/components/loaging/loading.component';
 import { Pagination } from '../../../shared/components/pagination/pagination.component';
@@ -8,6 +8,9 @@ import { AlbumService } from '../../../core/services/album.service';
 import { ToastService } from '../../../core/services/toast.service';
 import { Album } from '../../../core/models/album.model';
 import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
+import { WebSocketService } from '../../../core/services/websocket.service';
+import { Subject } from 'rxjs/internal/Subject';
+import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 
 @Component({
   selector: 'app-album-list',
@@ -21,10 +24,12 @@ import { ConfirmDialog } from '../../../shared/components/confirm-dialog/confirm
   ],
   templateUrl: './album-list.html',
 })
-export class AlbumList implements OnInit {
+export class AlbumList implements OnInit, OnDestroy {
 
   private albumService = inject(AlbumService);
   private toastService = inject(ToastService);
+  private wsService = inject(WebSocketService);
+  private destroy$ = new Subject<void>();
 
   loading = signal(true);
   albuns = signal<Album[]>([]);
@@ -44,6 +49,21 @@ export class AlbumList implements OnInit {
   ngOnInit(): void {
     this.loadGeneros();
     this.loadAlbuns();
+    this.subscribeToNotifications();
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+  private subscribeToNotifications(): void {
+    this.wsService.onAlbumChange()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.loadAlbuns();
+        this.loadGeneros();
+      });
   }
 
   private loadGeneros(): void {
