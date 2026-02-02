@@ -94,7 +94,7 @@ Sistema fullstack para gerenciamento de artistas musicais e seus álbuns, com up
 
 ### 1. Clone o repositório
 ```bash
-git clone <repository-url>
+git clone https://github.com/henricoVilela/henricotadeuribeiroalvesvilela048202
 cd henricotadeuribeiroalvesvilela048202
 ```
 ### 2. Inicie os containers
@@ -109,7 +109,7 @@ docker compose up -d
 | **Frontend** | http://localhost:4200 | admin / admin123 |
 | **Backend API** | http://localhost:8080/api/v1 | - |
 | **Swagger UI** | http://localhost:8080/swagger-ui.html | - |
-| **MinIO Console** | http://localhost:9001 | minioadmin / minioadmin123 |
+| **MinIO Console** | http://localhost:9001 | minioadmin / minioadmin |
 
 ---
 
